@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>OOP Concepts — Python vs C++</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #13161e;
+    --panel: #1a1e2a;
+    --border: #252a38;
+    --accent-py: #3fb950;
+    --accent-cpp: #58a6ff;
+    --accent-gold: #e3b341;
+    --text: #e6edf3;
+    --muted: #7d8590;
+    --tag-bg: #21262d;
+
+    /* syntax colors */
+    --s-keyword: #ff7b72;
+    --s-class: #ffa657;
+    --s-func: #d2a8ff;
+    --s-str: #a5d6ff;
+    --s-comment: #5a6680;
+    --s-num: #79c0ff;
+    --s-self: #ffa657;
+    --s-special: #e3b341;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── Header ─── */
+  header {
+    padding: 2.5rem 3rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-end;
+    gap: 2rem;
+    flex-wrap: wrap;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: -60px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, #3fb95014 0%, transparent 70%);
+    pointer-events: none;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    top: -40px; right: 80px;
+    width: 250px; height: 250px;
+    background: radial-gradient(circle, #58a6ff12 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-title { flex: 1; min-width: 220px; }
+  .header-title h1 {
+    font-size: clamp(1.6rem, 4vw, 2.6rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+  .header-title h1 span.py { color: var(--accent-py); }
+  .header-title h1 span.cpp { color: var(--accent-cpp); }
+  .header-title p {
+    margin-top: 0.4rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+    letter-spacing: 0.02em;
+  }
+  .lang-badges { display: flex; gap: 0.6rem; align-items: center; }
+  .badge {
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+  .badge.py { background: #3fb95020; color: var(--accent-py); border: 1px solid #3fb95040; }
+  .badge.cpp { background: #58a6ff20; color: var(--accent-cpp); border: 1px solid #58a6ff40; }
+
+  /* ─── Concept tabs ─── */
+  .tabs-wrap {
+    padding: 1.2rem 3rem 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs-wrap::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    padding: 0.7rem 1.1rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    position: relative;
+    white-space: nowrap;
+    transition: color 0.2s;
+  }
+  .tab-btn::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent-gold);
+    transform: scaleX(0);
+    transition: transform 0.25s;
+  }
+  .tab-btn.active { color: var(--text); }
+  .tab-btn.active::after { transform: scaleX(1); }
+  .tab-btn:hover { color: var(--text); }
+
+  /* ─── Main content ─── */
+  .content { padding: 2rem 3rem; }
+  .concept-panel { display: none; animation: fadeIn 0.3s ease; }
+  .concept-panel.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  .concept-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.2rem;
+    margin-bottom: 1.6rem;
+    flex-wrap: wrap;
+  }
+  .concept-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent-gold);
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    margin-top: 4px;
+  }
+  .concept-info h2 {
+    font-size: clamp(1.2rem, 3vw, 1.7rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .concept-info p {
+    margin-top: 0.3rem;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.6;
+    max-width: 640px;
+  }
+
+  /* ─── Key points chips ─── */
+  .key-points {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.6rem;
+  }
+  .chip {
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.03em;
+  }
+  .chip.gold { border-color: #e3b34140; color: var(--accent-gold); }
+
+  /* ─── Code comparison ─── */
+  .code-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  @media (max-width: 820px) { .code-grid { grid-template-columns: 1fr; } }
+
+  .code-pane {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+  }
+  .code-pane-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot.r { background: #ff5f57; }
+  .dot.y { background: #febc2e; }
+  .dot.g { background: #28c840; }
+  .pane-lang {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+  }
+  .pane-lang.py { background: #3fb95020; color: var(--accent-py); }
+  .pane-lang.cpp { background: #58a6ff20; color: var(--accent-cpp); }
+
+  pre {
+    padding: 1.2rem 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.75;
+    overflow-x: auto;
+    margin: 0;
+    white-space: pre;
+  }
+  pre::-webkit-scrollbar { height: 4px; }
+  pre::-webkit-scrollbar-track { background: var(--panel); }
+  pre::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* syntax highlighting spans */
+  .kw { color: var(--s-keyword); }
+  .cl { color: var(--s-class); }
+  .fn { color: var(--s-func); }
+  .st { color: var(--s-str); }
+  .cm { color: var(--s-comment); font-style: italic; }
+  .nm { color: var(--s-num); }
+  .slf { color: var(--s-self); }
+  .sp { color: var(--s-special); }
+
+  /* ─── Output box ─── */
+  .output-row {
+    margin-top: 1rem;
+    background: #0a0c10;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .output-header {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+  .output-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-gold); }
+  .output-body {
+    padding: 0.8rem 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.76rem;
+    line-height: 1.7;
+    color: #8fb8d0;
+  }
+  .output-body .line::before { content: '▶  '; color: var(--accent-gold); }
+
+  /* ─── Concept diagram ─── */
+  .diagram-row {
+    margin-top: 1.4rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem 1.5rem;
+  }
+  .diagram-row h3 {
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+  }
+  .diagram-boxes {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .dbox {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 0.6rem 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    text-align: center;
+    min-width: 90px;
+  }
+  .dbox .dbox-label { color: var(--muted); font-size: 0.62rem; letter-spacing: 0.08em; margin-bottom: 3px; }
+  .dbox .dbox-name { font-weight: 700; }
+  .dbox.highlight { border-color: var(--accent-gold); background: #e3b34110; }
+  .dbox.py-c { border-color: var(--accent-py); }
+  .dbox.cpp-c { border-color: var(--accent-cpp); }
+  .darrow { color: var(--muted); font-size: 1.2rem; padding: 0 0.2rem; }
+
+  /* ─── Footer ─── */
+  footer {
+    padding: 1.5rem 3rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  footer p { color: var(--muted); font-size: 0.8rem; }
+  .progress-row { display: flex; gap: 0.4rem; }
+  .prog-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .prog-dot.active { background: var(--accent-gold); }
+  .nav-btns { margin-left: auto; display: flex; gap: 0.6rem; }
+  .nav-btn {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.45rem 1.1rem;
+    border-radius: 5px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .nav-btn:hover { border-color: var(--accent-gold); background: #e3b34110; }
+  .nav-btn.next { background: var(--accent-gold); color: #000; border-color: var(--accent-gold); }
+  .nav-btn.next:hover { background: #f0c050; }
+
+  @media (max-width: 600px) {
+    header, .tabs-wrap, .content, footer { padding-left: 1.2rem; padding-right: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-title">
+    <h1>OOP Concepts <span class="py">Python</span> <span style="color:var(--muted)">vs</span> <span class="cpp">C++</span></h1>
+    <p>A complete side-by-side reference — Classes · Inheritance · Polymorphism · Encapsulation · Abstraction</p>
+  </div>
+  <div class="lang-badges">
+    <span class="badge py">Python 3</span>
+    <span class="badge cpp">C++ 17</span>
+  </div>
+</header>
+
+<div class="tabs-wrap" id="tabs">
+  <button class="tab-btn active" onclick="showTab(0)">01 · Classes &amp; Objects</button>
+  <button class="tab-btn" onclick="showTab(1)">02 · Inheritance</button>
+  <button class="tab-btn" onclick="showTab(2)">03 · Polymorphism</button>
+  <button class="tab-btn" onclick="showTab(3)">04 · Encapsulation</button>
+  <button class="tab-btn" onclick="showTab(4)">05 · Abstraction</button>
+</div>
+
+<div class="content">
+
+  <!-- ═══════════════ 1. CLASSES & OBJECTS ═══════════════ -->
+  <div class="concept-panel active" id="panel-0">
+    <div class="concept-header">
+      <div class="concept-number">CONCEPT 01</div>
+      <div class="concept-info">
+        <h2>Classes &amp; Objects</h2>
+        <p>A <strong>class</strong> is a blueprint that defines attributes (data) and methods (behavior). An <strong>object</strong> is a concrete instance of that class living in memory.</p>
+      </div>
+    </div>
+    <div class="key-points">
+      <span class="chip gold">__init__ / constructor</span>
+      <span class="chip">attributes</span>
+      <span class="chip">methods</span>
+      <span class="chip">instantiation</span>
+      <span class="chip">self / this</span>
+    </div>
+    <div class="code-grid">
+      <div class="code-pane">
+        <div class="code-pane-header">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="pane-lang py">PYTHON</span>
+        </div>
+        <pre><span class="cm"># Define a class</span>
+<span class="kw">class</span> <span class="cl">Car</span>:
+    <span class="cm"># Constructor</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="slf">self</span>, brand, speed):
+        <span class="slf">self</span>.brand = brand     <span class="cm"># attribute</span>
+        <span class="slf">self</span>.speed = speed
+
+    <span class="kw">def</span> <span class="fn">describe</span>(<span class="slf">self</span>):
+        <span class="kw">print</span>(<span class="st">f"Brand: </span>{<span class="slf">self</span>.brand}<span class="st">, Speed: </span>{<span class="slf">self</span>.speed}<span class="st"> km/h"</span>)
+
+    <span class="kw">def</span> <span class="fn">accelerate</span>(<span class="slf">self</span>, amount):
+        <span class="slf">self</span>.speed += amount
+        <span class="kw">print</span>(<span class="st">f"Now going </span>{<span class="slf">self</span>.speed}<span class="st"> km/h!"</span>)
+
+
+<span class="cm"># Create objects (instances)</span>
+car1 = <span class="cl">Car</span>(<span class="st">"Tesla"</span>, <span class="nm">120</span>)
+car2 = <span class="cl">Car</span>(<span class="st">"BMW"</span>, <span class="nm">150</span>)
+
+car1.describe()
+car1.accelerate(<span class="nm">30</span>)
+car2.describe()</pre>
+      </div>
+      <div class="code-pane">
+        <div class="code-pane-header">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="pane-lang cpp">C++</span>
+        </div>
+        <pre><span class="cm">// Define a class</span>
+<span class="kw">#include</span> <span class="st">&lt;iostream&gt;</span>
+<span class="kw">#include</span> <span class="st">&lt;string&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="kw">class</span> <span class="cl">Car</span> {
+<span class="kw">public</span>:
+    string brand;
+    <span class="kw">int</span> speed;
+
+    <span class="cm">// Constructor</span>
+    <span class="cl">Car</span>(string b, <span class="kw">int</span> s) : brand(b), speed(s) {}
+
+    <span class="kw">void</span> <span class="fn">describe</span>() {
+        cout &lt;&lt; <span class="st">"Brand: "</span> &lt;&lt; brand
+             &lt;&lt; <span class="st">", Speed: "</span> &lt;&lt; speed &lt;&lt; <span class="st">" km/h\n"</span>;
+    }
+
+    <span class="kw">void</span> <span class="fn">accelerate</span>(<span class="kw">int</span> amount) {
+        speed += amount;
+        cout &lt;&lt; <span class="st">"Now going "</span> &lt;&lt; speed &lt;&lt; <span class="st">" km/h!\n"</span>;
+    }
+};
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="cl">Car</span> car1(<span class="st">"Tesla"</span>, <span class="nm">120</span>);
+    <span class="cl">Car</span> car2(<span class="st">"BMW"</span>, <span class="nm">150</span>);
+    car1.describe();
+    car1.accelerate(<span class="nm">30</span>);
+    car2.describe();
+}</pre>
+      </div>
+    </div>
+    <div class="output-row">
+      <div class="output-header"><span class="output-dot"></span> OUTPUT</div>
+      <div class="output-body">
+        <div class="line">Brand: Tesla, Speed: 120 km/h</div>
+        <div class="line">Now going 150 km/h!</div>
+        <div class="line">Brand: BMW, Speed: 150 km/h</div>
+      </div>
+    </div>
+    <div class="diagram-row">
+      <h3>Structure</h3>
+      <div class="diagram-boxes">
+        <div class="dbox highlight"><div class="dbox-label">BLUEPRINT</div><div class="dbox-name">Car (class)</div></div>
+        <div class="darrow">→</div>
+        <div class="dbox py-c"><div class="dbox-label">INSTANCE</div><div class="dbox-name">car1</div></div>
+        <div class="darrow">+</div>
+        <div class="dbox cpp-c"><div class="dbox-label">INSTANCE</div><div class="dbox-name">car2</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ 2. INHERITANCE ═══════════════ -->
+  <div class="concept-panel" id="panel-1">
+    <div class="concept-header">
+      <div class="concept-number">CONCEPT 02</div>
+      <div class="concept-info">
+        <h2>Inheritance</h2>
+        <p>A child class <strong>inherits</strong> attributes and methods from a parent class, enabling code reuse and hierarchical classification. The child can also override or extend parent behavior.</p>
+      </div>
+    </div>
+    <div class="key-points">
+      <span class="chip gold">parent → child</span>
+      <span class="chip">super()</span>
+      <span class="chip">method override</span>
+      <span class="chip">is-a relationship</span>
+      <span class="chip">code reuse</span>
+    </div>
+    <div class="code-grid">
+      <div class="code-pane">
+        <div class="code-pane-header">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="pane-lang py">PYTHON</span>
+        </div>
+        <pre><span class="kw">class</span> <span class="cl">Animal</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="slf">self</span>, name):
+        <span class="slf">self</span>.name = name
+
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="slf">self</span>):
+        <span class="kw">print</span>(<span class="st">f"</span>{<span class="slf">self</span>.name}<span class="st"> makes a sound"</span>)
+
+    <span class="kw">def</span> <span class="fn">breathe</span>(<span class="slf">self</span>):
+        <span class="kw">print</span>(<span class="st">f"</span>{<span class="slf">self</span>.name}<span class="st"> breathes oxygen"</span>)
+
+
+<span class="cm"># Dog inherits from Animal</span>
+<span class="kw">class</span> <span class="cl">Dog</span>(<span class="cl">Animal</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="slf">self</span>, name, breed):
+        <span class="kw">super</span>().__init__(name)   <span class="cm"># call parent __init__</span>
+        <span class="slf">self</span>.breed = breed
+
+    <span class="cm"># Override speak()</span>
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="slf">self</span>):
+        <span class="kw">print</span>(<span class="st">f"</span>{<span class="slf">self</span>.name}<span class="st"> says: Woof!"</span>)
+
+
+<span class="kw">class</span> <span class="cl">Cat</span>(<span class="cl">Animal</span>):
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="slf">self</span>):
+        <span class="kw">print</span>(<span class="st">f"</span>{<span class="slf">self</span>.name}<span class="st"> says: Meow!"</span>)
+
+
+dog = <span class="cl">Dog</span>(<span class="st">"Bruno"</span>, <span class="st">"Labrador"</span>)
+cat = <span class="cl">Cat</span>(<span class="st">"Whiskers"</span>)
+
+dog.speak()
+dog.breathe()   <span class="cm"># inherited method</span>
+cat.speak()</pre>
+      </div>
+      <div class="code-pane">
+        <div class="code-pane-header">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="pane-lang cpp">C++</span>
+        </div>
+        <pre><span class="kw">class</span> <span class="cl">Animal</span> {
+<span class="kw">public</span>:
+    string name;
+    <span class="cl">Animal</span>(string n) : name(n) {}
+
+    <span class="kw">virtual void</span> <span class="fn">speak</span>() {
+        cout &lt;&lt; name &lt;&lt; <span class="st">" makes a sound\n"</span>;
+    }
+    <span class="kw">void</span> <span class="fn">breathe</span>() {
+        cout &lt;&lt; name &lt;&lt; <span class="st">" breathes oxygen\n"</span>;
+    }
+};
+
+<span class="cm">// Dog inherits from Animal</span>
+<span class="kw">class</span> <span class="cl">Dog</span> : <span class="kw">public</span> <span class="cl">Animal</span> {
+<span class="kw">public</span>:
+    string breed;
+    <span class="cl">Dog</span>(string n, string b)
+        : <span class="cl">Animal</span>(n), breed(b) {}   <span class="cm">// call parent ctor</span>
+
+    <span class="kw">void</span> <span class="fn">speak</span>() <span class="kw">override</span> {
+        cout &lt;&lt; name &lt;&lt; <span class="st">" says: Woof!\n"</span>;
+    }
+};
+
+<span class="kw">class</span> <span class="cl">Cat</span> : <span class="kw">public</span> <span class="cl">Animal</span> {
+<span class="kw">public</span>:
+    <span class="cl">Cat</span>(string n) : <span class="cl">Animal</span>(n) {}
+    <span class="kw">void</span> <span class="fn">speak</span>() <span class="kw">override</span> {
+        cout &lt;&lt; name &lt;&lt; <span class="st">" says: Meow!\n"</span>;
+    }
+};
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="cl">Dog</span> dog(<span class="st">"Bruno"</span>, <span class="st">"Labrador"</span>);
+    <span class="cl">Cat</span> cat(<span class="st">"Whiskers"</span>);
+    dog.speak();
+    dog.breathe();   <span class="cm">// inherited</span>
+    cat.speak();
+}</pre>
+      </div>
+    </div>
+    <div class="output-row">
+      <div class="output-header"><span class="output-dot"></span> OUTPUT</div>
+      <div class="output-body">
+        <div class="line">Bruno says: Woof!</div>
+        <div class="line">Bruno breathes oxygen</div>
+        <div class="line">Whiskers says: Meow!</div>
+      </div>
+    </div>
+    <div class="diagram-row">
+      <h3>Hierarchy</h3>
+      <div class="diagram-boxes">
+        <div class="dbox highlight"><div class="dbox-label">PARENT</div><div class="dbox-name">Animal</div></div>
+        <div class="darrow">→</div>
+        <div class="dbox py-c"><div class="dbox-label">CHILD</div><div class="dbox-name">Dog</div></div>
+        <div class="darrow">+</div>
+        <div class="dbox cpp-c"><div class="dbox-label">CHILD</div><div class="dbox-name">Cat</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ 3. POLYMORPHISM ═══════════════ -->
+  <div class="concept-panel" id="panel-2">
+    <div class="concept-header">
+      <div class="concept-number">CONCEPT 03</div>
+      <div class="concept-info">
+        <h2>Polymorphism</h2>
+        <p>"Many forms" — the same method name behaves differently across different classes. Achieved via <strong>method overriding</strong> (runtime) and <strong>method overloading</strong> (compile-time in C++).</p>
+      </div>
+    </div>
+    <div class="key-points">
+      <span class="chip gold">one interface, many forms</span>
+      <span class="chip">runtime dispatch</span>
+      <span class="chip">virtual methods</span>
+      <span class="chip">duck typing (Python)</span>
+      <span class="chip">overloading (C++)</span>
+    </div>
+    <div class="code-grid">
+      <div class="code-pane">
+        <div class="code-pane-header">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="pane-lang py">PYTHON</span>
+        </div>
+        <pre><span class="kw">class</span> <span class="cl">Shape</span>:
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="slf">self</span>):
+        <span class="kw">return</span> <span class="nm">0</span>
+
+<span class="kw">class</span> <span class="cl">Circle</span>(<span class="cl">Shape</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="slf">self</span>, r):
+        <span class="slf">self</span>.r = r
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="slf">self</span>):
+        <span class="kw">return</span> <span class="nm">3.14</span> * <span class="slf">self</span>.r ** <span class="nm">2</span>
+
+<span class="kw">class</span> <span class="cl">Rectangle</span>(<span class="cl">Shape</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="slf">self</span>, w, h):
+        <span class="slf">self</span>.w = w; <span class="slf">self</span>.h = h
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="slf">self</span>):
+        <span class="kw">return</span> <span class="slf">self</span>.w * <span class="slf">self</span>.h
+
+<span class="kw">class</span> <span class="cl">Triangle</span>(<span class="cl">Shape</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="slf">self</span>, b, h):
+        <span class="slf">self</span>.b = b; <span class="slf">self</span>.h = h
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="slf">self</span>):
+        <span class="kw">return</span> <span class="nm">0.5</span> * <span class="slf">self</span>.b * <span class="slf">self</span>.h
+
+
+<span class="cm"># Polymorphic loop — same call, different result</span>
+shapes = [<span class="cl">Circle</span>(<span class="nm">5</span>), <span class="cl">Rectangle</span>(<span class="nm">4</span>,<span class="nm">6</span>), <span class="cl">Triangle</span>(<span class="nm">3</span>,<span class="nm">8</span>)]
+<span class="kw">for</span> s <span class="kw">in</span> shapes:
+    <span class="kw">print</span>(<span class="st">f"</span>{type(s).__name__}<span class="st"> area: </span>{s.area()}<span class="st">"</span>)</pre>
+      </div>
+      <div class="code-pane">
+        <div class="code-pane-header">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="pane-lang cpp">C++</span>
+        </div>
+        <pre><span class="kw">class</span> <span class="cl">Shape</span> {
+<span class="kw">public</span>:
+    <span class="kw">virtual double</span> <span class="fn">area</span>() { <span class="kw">return</span> <span class="nm">0</span>; }
+    <span class="kw">virtual</span> ~<span class="cl">Shape</span>() {}
+};
+
+<span class="kw">class</span> <span class="cl">Circle</span> : <span class="kw">public</span> <span class="cl">Shape</span> {
+    <span class="kw">double</span> r;
+<span class="kw">public</span>:
+    <span class="cl">Circle</span>(<span class="kw">double</span> r) : r(r) {}
+    <span class="kw">double</span> <span class="fn">area</span>() <span class="kw">override</span> { <span class="kw">return</span> <span class="nm">3.14</span> * r * r; }
+};
+
+<span class="kw">class</span> <span class="cl">Rectangle</span> : <span class="kw">public</span> <span class="cl">Shape</span> {
+    <span class="kw">double</span> w, h;
+<span class="kw">public</span>:
+    <span class="cl">Rectangle</span>(<span class="kw">double</span> w, <span class="kw">double</span> h) : w(w), h(h) {}
+    <span class="kw">double</span> <span class="fn">area</span>() <span class="kw">override</span> { <span class="kw">return</span> w * h; }
+};
+
+<span class="kw">class</span> <span class="cl">Triangle</span> : <span class="kw">public</span> <span class="cl">Shape</span> {
+    <span class="kw">double</span> b, h;
+<span class="kw">public</span>:
+    <span class="cl">Triangle</span>(<span class="kw">double</span> b, <span class="kw">double</span> h) : b(b), h(h) {}
+    <span class="kw">double</span> <span class="fn">area</span>() <span class="kw">override</span> { <span class="kw">return</span> <span class="nm">0.5</span> * b * h; }
+};
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="cl">Shape</span>* shapes[] = {
+        <span class="kw">new</span> <span class="cl">Circle</span>(<span class="nm">5</span>),
+        <span class="kw">new</span> <span class="cl">Rectangle</span>(<span class="nm">4</span>,<span class="nm">6</span>),
+        <span class="kw">new</span> <span class="cl">Triangle</span>(<span class="nm">3</span>,<span class="nm">8</span>)
+    };
+    <span class="kw">for</span> (<span class="kw">auto</span> s : shapes)
+        cout &lt;&lt; <span class="st">"Area: "</span> &lt;&lt; s-&gt;area() &lt;&lt; <span class="st">"\n"</span>;
+}</pre>
+      </div>
+    </div>
+    <div class="output-row">
+      <div class="output-header"><span class="output-dot"></span> OUTPUT</div>
+      <div class="output-body">
+        <div class="line">Circle area: 78.5</div>
+        <div class="line">Rectangle area: 24</div>
+        <div class="line">Triangle area: 12.0</div>
+      </div>
+    </div>
+    <div class="diagram-row">
+      <h3>One method — three behaviors</h3>
+      <div class="diagram-boxes">
+        <div class="dbox highlight"><div class="dbox-label">CALL</div><div class="dbox-name">area()</div></div>
+        <div class="darrow">→</div>
+        <div class="dbox py-c"><div class="dbox-label">Circle</div><div class="dbox-name">78.5</div></div>
+        <div class="darrow">|</div>
+        <div class="dbox"><div class="dbox-label">Rect</div><div class="dbox-name">24</div></div>
+        <div class="darrow">|</div>
+        <div class="dbox cpp-c"><div class="dbox-label">Triangle</div><div class="dbox-name">12.0</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ 4. ENCAPSULATION ═══════════════ -->
+  <div class="concept-panel" id="panel-3">
+    <div class="concept-header">
+      <div class="concept-number">CONCEPT 04</div>
+      <div class="concept-info">
+        <h2>Encapsulation</h2>
+        <p>Bundling data and methods together while <strong>restricting direct access</strong> to internal state. Achieved through access modifiers and getter/setter methods, protecting data integrity.</p>
+      </div>
+    </div>
+    <div class="key-points">
+      <span class="chip gold">data hiding</span>
+      <span class="chip">private / public</span>
+      <span class="chip">getters &amp; setters</span>
+      <span class="chip">_ prefix (Python)</span>
+      <span class="chip">@property</span>
+    </div>
+    <div class="code-grid">
+      <div class="code-pane">
+        <div class="code-pane-header">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="pane-lang py">PYTHON</span>
+        </div>
+        <pre><span class="kw">class</span> <span class="cl">BankAccount</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="slf">self</span>, owner, balance):
+        <span class="slf">self</span>.owner = owner
+        <span class="slf">self</span>.__balance = balance  <span class="cm"># private</span>
+
+    <span class="cm"># Getter (read-only access)</span>
+    <span class="sp">@property</span>
+    <span class="kw">def</span> <span class="fn">balance</span>(<span class="slf">self</span>):
+        <span class="kw">return</span> <span class="slf">self</span>.__balance
+
+    <span class="kw">def</span> <span class="fn">deposit</span>(<span class="slf">self</span>, amount):
+        <span class="kw">if</span> amount &gt; <span class="nm">0</span>:
+            <span class="slf">self</span>.__balance += amount
+            <span class="kw">print</span>(<span class="st">f"Deposited ₹</span>{amount}<span class="st">"</span>)
+        <span class="kw">else</span>:
+            <span class="kw">print</span>(<span class="st">"Invalid amount!"</span>)
+
+    <span class="kw">def</span> <span class="fn">withdraw</span>(<span class="slf">self</span>, amount):
+        <span class="kw">if</span> <span class="nm">0</span> &lt; amount &lt;= <span class="slf">self</span>.__balance:
+            <span class="slf">self</span>.__balance -= amount
+            <span class="kw">print</span>(<span class="st">f"Withdrawn ₹</span>{amount}<span class="st">"</span>)
+        <span class="kw">else</span>:
+            <span class="kw">print</span>(<span class="st">"Insufficient funds!"</span>)
+
+
+acc = <span class="cl">BankAccount</span>(<span class="st">"Arjun"</span>, <span class="nm">5000</span>)
+acc.deposit(<span class="nm">2000</span>)
+acc.withdraw(<span class="nm">1000</span>)
+<span class="kw">print</span>(<span class="st">f"Balance: ₹</span>{acc.balance}<span class="st">"</span>)
+<span class="cm"># acc.__balance → AttributeError ✗</span></pre>
+      </div>
+      <div class="code-pane">
+        <div class="code-pane-header">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="pane-lang cpp">C++</span>
+        </div>
+        <pre><span class="kw">class</span> <span class="cl">BankAccount</span> {
+<span class="kw">private</span>:          <span class="cm">// hidden from outside</span>
+    string owner;
+    <span class="kw">double</span> balance;
+
+<span class="kw">public</span>:
+    <span class="cl">BankAccount</span>(string o, <span class="kw">double</span> b)
+        : owner(o), balance(b) {}
+
+    <span class="cm">// Getter</span>
+    <span class="kw">double</span> <span class="fn">getBalance</span>() { <span class="kw">return</span> balance; }
+
+    <span class="kw">void</span> <span class="fn">deposit</span>(<span class="kw">double</span> amount) {
+        <span class="kw">if</span> (amount &gt; <span class="nm">0</span>) {
+            balance += amount;
+            cout &lt;&lt; <span class="st">"Deposited ₹"</span> &lt;&lt; amount &lt;&lt; <span class="st">"\n"</span>;
+        } <span class="kw">else</span>
+            cout &lt;&lt; <span class="st">"Invalid amount!\n"</span>;
+    }
+
+    <span class="kw">void</span> <span class="fn">withdraw</span>(<span class="kw">double</span> amount) {
+        <span class="kw">if</span> (amount &gt; <span class="nm">0</span> &amp;&amp; amount &lt;= balance) {
+            balance -= amount;
+            cout &lt;&lt; <span class="st">"Withdrawn ₹"</span> &lt;&lt; amount &lt;&lt; <span class="st">"\n"</span>;
+        } <span class="kw">else</span>
+            cout &lt;&lt; <span class="st">"Insufficient funds!\n"</span>;
+    }
+};
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="cl">BankAccount</span> acc(<span class="st">"Arjun"</span>, <span class="nm">5000</span>);
+    acc.deposit(<span class="nm">2000</span>);
+    acc.withdraw(<span class="nm">1000</span>);
+    cout &lt;&lt; <span class="st">"Balance: ₹"</span> &lt;&lt; acc.getBalance() &lt;&lt; <span class="st">"\n"</span>;
+    <span class="cm">// acc.balance → compile error ✗</span>
+}</pre>
+      </div>
+    </div>
+    <div class="output-row">
+      <div class="output-header"><span class="output-dot"></span> OUTPUT</div>
+      <div class="output-body">
+        <div class="line">Deposited ₹2000</div>
+        <div class="line">Withdrawn ₹1000</div>
+        <div class="line">Balance: ₹6000</div>
+      </div>
+    </div>
+    <div class="diagram-row">
+      <h3>Access Control</h3>
+      <div class="diagram-boxes">
+        <div class="dbox highlight"><div class="dbox-label">PUBLIC</div><div class="dbox-name">deposit / withdraw</div></div>
+        <div class="darrow">→</div>
+        <div class="dbox cpp-c"><div class="dbox-label">PRIVATE</div><div class="dbox-name">__balance</div></div>
+        <div class="darrow">🔒</div>
+        <div class="dbox" style="border-color:#ff7b7260;"><div class="dbox-label">BLOCKED</div><div class="dbox-name">direct access</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ 5. ABSTRACTION ═══════════════ -->
+  <div class="concept-panel" id="panel-4">
+    <div class="concept-header">
+      <div class="concept-number">CONCEPT 05</div>
+      <div class="concept-info">
+        <h2>Abstraction</h2>
+        <p>Hiding <strong>implementation complexity</strong> and exposing only essential features. Abstract classes define a contract (interface) that all subclasses must fulfill, without dictating how.</p>
+      </div>
+    </div>
+    <div class="key-points">
+      <span class="chip gold">abstract class</span>
+      <span class="chip">ABC / pure virtual</span>
+      <span class="chip">interface contract</span>
+      <span class="chip">hide complexity</span>
+      <span class="chip">@abstractmethod</span>
+    </div>
+    <div class="code-grid">
+      <div class="code-pane">
+        <div class="code-pane-header">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="pane-lang py">PYTHON</span>
+        </div>
+        <pre><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
+
+<span class="kw">class</span> <span class="cl">Vehicle</span>(ABC):  <span class="cm"># abstract base class</span>
+
+    <span class="sp">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">start</span>(<span class="slf">self</span>):
+        <span class="kw">pass</span>          <span class="cm"># must be implemented</span>
+
+    <span class="sp">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">fuel_type</span>(<span class="slf">self</span>):
+        <span class="kw">pass</span>
+
+    <span class="kw">def</span> <span class="fn">description</span>(<span class="slf">self</span>):  <span class="cm"># concrete method</span>
+        <span class="kw">print</span>(<span class="st">f"Vehicle runs on: </span>{<span class="slf">self</span>.fuel_type()}<span class="st">"</span>)
+
+
+<span class="kw">class</span> <span class="cl">ElectricCar</span>(<span class="cl">Vehicle</span>):
+    <span class="kw">def</span> <span class="fn">start</span>(<span class="slf">self</span>):
+        <span class="kw">print</span>(<span class="st">"Electric car: silent start ⚡"</span>)
+    <span class="kw">def</span> <span class="fn">fuel_type</span>(<span class="slf">self</span>):
+        <span class="kw">return</span> <span class="st">"Electricity"</span>
+
+
+<span class="kw">class</span> <span class="cl">PetrolCar</span>(<span class="cl">Vehicle</span>):
+    <span class="kw">def</span> <span class="fn">start</span>(<span class="slf">self</span>):
+        <span class="kw">print</span>(<span class="st">"Petrol car: Vroom! 🔥"</span>)
+    <span class="kw">def</span> <span class="fn">fuel_type</span>(<span class="slf">self</span>):
+        <span class="kw">return</span> <span class="st">"Petrol"</span>
+
+
+<span class="cm"># v = Vehicle()  → TypeError: can't instantiate</span>
+ev = <span class="cl">ElectricCar</span>()
+pc = <span class="cl">PetrolCar</span>()
+
+ev.start(); ev.description()
+pc.start(); pc.description()</pre>
+      </div>
+      <div class="code-pane">
+        <div class="code-pane-header">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="pane-lang cpp">C++</span>
+        </div>
+        <pre><span class="kw">#include</span> <span class="st">&lt;iostream&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="cm">// Abstract base class</span>
+<span class="kw">class</span> <span class="cl">Vehicle</span> {
+<span class="kw">public</span>:
+    <span class="cm">// Pure virtual = must override</span>
+    <span class="kw">virtual void</span> <span class="fn">start</span>() = <span class="nm">0</span>;
+    <span class="kw">virtual</span> string <span class="fn">fuelType</span>() = <span class="nm">0</span>;
+
+    <span class="kw">void</span> <span class="fn">description</span>() {   <span class="cm">// concrete method</span>
+        cout &lt;&lt; <span class="st">"Runs on: "</span>
+             &lt;&lt; fuelType() &lt;&lt; <span class="st">"\n"</span>;
+    }
+    <span class="kw">virtual</span> ~<span class="cl">Vehicle</span>() {}
+};
+
+<span class="kw">class</span> <span class="cl">ElectricCar</span> : <span class="kw">public</span> <span class="cl">Vehicle</span> {
+<span class="kw">public</span>:
+    <span class="kw">void</span> <span class="fn">start</span>() <span class="kw">override</span> {
+        cout &lt;&lt; <span class="st">"Electric: silent start\n"</span>;
+    }
+    string <span class="fn">fuelType</span>() <span class="kw">override</span> {
+        <span class="kw">return</span> <span class="st">"Electricity"</span>;
+    }
+};
+
+<span class="kw">class</span> <span class="cl">PetrolCar</span> : <span class="kw">public</span> <span class="cl">Vehicle</span> {
+<span class="kw">public</span>:
+    <span class="kw">void</span> <span class="fn">start</span>() <span class="kw">override</span> {
+        cout &lt;&lt; <span class="st">"Petrol: Vroom!\n"</span>;
+    }
+    string <span class="fn">fuelType</span>() <span class="kw">override</span> {
+        <span class="kw">return</span> <span class="st">"Petrol"</span>;
+    }
+};
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="cl">ElectricCar</span> ev;
+    <span class="cl">PetrolCar</span> pc;
+    ev.start(); ev.description();
+    pc.start(); pc.description();
+}</pre>
+      </div>
+    </div>
+    <div class="output-row">
+      <div class="output-header"><span class="output-dot"></span> OUTPUT</div>
+      <div class="output-body">
+        <div class="line">Electric car: silent start ⚡</div>
+        <div class="line">Vehicle runs on: Electricity</div>
+        <div class="line">Petrol car: Vroom! 🔥</div>
+        <div class="line">Vehicle runs on: Petrol</div>
+      </div>
+    </div>
+    <div class="diagram-row">
+      <h3>Contract-based design</h3>
+      <div class="diagram-boxes">
+        <div class="dbox highlight"><div class="dbox-label">ABSTRACT</div><div class="dbox-name">Vehicle</div></div>
+        <div class="darrow">enforces ↓</div>
+        <div class="dbox py-c"><div class="dbox-label">CONCRETE</div><div class="dbox-name">ElectricCar</div></div>
+        <div class="darrow">+</div>
+        <div class="dbox cpp-c"><div class="dbox-label">CONCRETE</div><div class="dbox-name">PetrolCar</div></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<footer>
+  <div class="progress-row" id="progress">
+    <div class="prog-dot active" onclick="showTab(0)"></div>
+    <div class="prog-dot" onclick="showTab(1)"></div>
+    <div class="prog-dot" onclick="showTab(2)"></div>
+    <div class="prog-dot" onclick="showTab(3)"></div>
+    <div class="prog-dot" onclick="showTab(4)"></div>
+  </div>
+  <p id="footer-label">Concept 1 of 5 — Classes &amp; Objects</p>
+  <div class="nav-btns">
+    <button class="nav-btn" id="btn-prev" onclick="navigate(-1)">← Prev</button>
+    <button class="nav-btn next" id="btn-next" onclick="navigate(1)">Next →</button>
+  </div>
+</footer>
+
+<script>
+  const labels = [
+    "Classes & Objects",
+    "Inheritance",
+    "Polymorphism",
+    "Encapsulation",
+    "Abstraction"
+  ];
+  let current = 0;
+
+  function showTab(idx) {
+    document.querySelectorAll('.concept-panel').forEach((p,i) => {
+      p.classList.toggle('active', i === idx);
+    });
+    document.querySelectorAll('.tab-btn').forEach((b,i) => {
+      b.classList.toggle('active', i === idx);
+    });
+    document.querySelectorAll('.prog-dot').forEach((d,i) => {
+      d.classList.toggle('active', i === idx);
+    });
+    document.getElementById('footer-label').textContent =
+      `Concept ${idx+1} of 5 — ${labels[idx]}`;
+    document.getElementById('btn-prev').disabled = idx === 0;
+    document.getElementById('btn-next').textContent = idx === 4 ? '✓ Done' : 'Next →';
+    current = idx;
+  }
+
+  function navigate(dir) {
+    const next = Math.max(0, Math.min(4, current + dir));
+    showTab(next);
+  }
+
+  showTab(0);
+</script>
+</body>
+</html>
